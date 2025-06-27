@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Honeycomb Grid</title>
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .honeycomb-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Help Bubble */
+    .help-bubble {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(36, 59, 151, 0.85);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      max-width: 270px;
+      font-size: 13px;
+      z-index: 10;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Big background hex */
+    .big-hex {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-29%, -50%) rotate(90deg);
+      background: #fcc6f1;
+      clip-path: polygon(
+        50% 0%, 93% 25%, 93% 75%,
+        50% 100%, 7% 75%, 7% 25%
+      );
+      z-index: 0;
+    }
+
+    .hexagon {
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      perspective: 1000px;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    .hex-inner {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      position: relative;
+    }
+
+    .hexagon.flipped .hex-inner {
+      transform: rotateY(180deg);
+    }
+
+    .hex-face {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      clip-path: polygon(
+        50% 0%, 93% 25%, 93% 75%,
+        50% 100%, 7% 75%, 7% 25%
+      );
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .front-radius-0 {
+      background-color: #fed12d;
+      font-size: 16px;
+    }
+
+    .front-radius-1 {
+      background-color: #fa59fa;
+      font-size: 15px;
+    }
+
+    .front-radius-2 {
+      background-color: #fe86fe;
+      font-size: 14px;
+    }
+
+    .front-stray {
+      background-color: #86a8fe;
+      font-size: 14px;
+    }
+
+    .hex-back {
+      background-color: #6a4c93;
+      transform: rotateY(180deg);
+      font-weight: normal;
+      font-size: 8px;
+    }
+
+    .hex-back a {
+        display: block;        /* forces it to be on its own line */
+        margin-top: 2px;      /* gives it space from the paragraph */
+        color: #00ccff;
+        text-decoration: underline;
+    }
+
+    .click-zone {
+      position: absolute;
+      width: 500px;
+      height: 100px;
+      background: transparent;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .info-bubble {
+      position: absolute;
+      width: 100px;
+      height: 150px;
+      background: #333;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .info-bubble.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .logo {
+      position: fixed;
+      bottom: 100px;
+      left: 60px;
+      width: 200px;
+      z-index: 10;
+      opacity: 0.85;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="honeycomb-container" id="honeycomb">
+  <div class="help-bubble">
+    <h4>🐝 Welcome to the PhD Ecosystem! 🐝</h4>
+    <p>This is a resource created by DrGENIE to provide an overview of the support system surrounding doctoral students at Chalmers.</p>
+    How to interpret the resource:
+    <ul>
+        <li>In the inner circle (magenta), immediately surrounding the PhD student (yellow), we have the roles a PhD student is expected to have closest contact with during their years at Chalmers.</li>
+        <li>In the outer circle (lighter magenta), we find additional resources available to a PhD student if (or should we say when…) their PhD journey takes an unexpected turn.</li>
+        <li>Outside of the honeycomb we find a few additional resources (lavender) that do not have any formal responsibilities toward the PhD student, but may still provide support in times of need and channels for PhD students to influence their work environment.</li>
+        <li>Click on any title to learn more about their role in your PhD journey.</li>
+    </ul>
+    
+    <p>Do you know who the person behind each role is in your personal ecosystem?</p>
+    <p>Note! We have tried to reflect the orverarching structure of the support system surrounding a PhD student, but some variation may occur between departments.</p>
+  </div>
+  <div class="big-hex"></div>
+  <img class="logo" src="DrGENIE logo.png" alt="Logo">
+</div>
+
+<script>
+  const container = document.getElementById('honeycomb');
+  const hexRadius = 120;
+  const centerX = window.innerWidth / 2 + 150;
+  const centerY = window.innerHeight / 2;
+
+  const rings = [
+    { count: 1, radius: 0 },
+    { count: 6, radius: 1 },
+    { count: 12, radius: 2 }
+  ];
+
+  const cardsContent = [
+    { title: "PhD student", 
+      info: "This is you, the main character of your very own PhD journey!",
+      link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#doctoral-student-0"},
+    { title: "Examiner", 
+      info: "ISP follow-up, approving course work, approving the licentiate thesis or midterm seminar, approving that the doctoral student is ready to go ahead with their defence.",
+      link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#examiner-3"},
+    { title: "Director of doctoral studies", 
+      info: "First ring 2",
+      link: "" },
+    { title: "Study admin", 
+      info: "First ring 3",
+      link: "" },
+    { title: "Line manager", 
+      info: "First ring 4",
+      link: "" },
+    { title: "Main supervisor", 
+      info: "Guide research, provide feedback, define goals, ISP follow-up, networking in the scientific community, ensure funding for the PhD student.",
+      link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#main-supervisor-1" },
+    { title: "Assistant supervisor",
+      info: "First ring 6",
+      link: "" },
+    { title: "Equality office", 
+      info: "Second ring 1",
+      link: "" },
+    { title: "Kurator", 
+      info: "Second ring 2",
+      link: ""  },
+    { title: "Company health provider", 
+      info: "Second ring 3",
+      link: ""  },
+    { title: "Special needs support",
+      info: "Second ring 4",
+      link: "" },
+    { title: "Economists\nAdministrators\nLab managers\nIT-support", 
+      info: "Second ring 5" ,
+      link: "" },
+    { title: "HR partner", 
+      info: "Second ring 6" ,
+      link: "" },
+    { title: "Vice head of department", 
+      info: "Second ring 7" ,
+      link: "" },
+    { title: "Head of department", 
+      info: "Second ring 8" ,
+      link: "" },
+    { title: "Head of division/\nunit", 
+      info: "Second ring 9" ,
+      link: "" },
+    { title: "Work environment/\nsafety representative", 
+      info: "Second ring 10" ,
+      link: "" },
+    { title: "Union representative", 
+      info: "Second ring 11" ,
+      link: "" },
+    { title: "Equality representative", 
+      info: "Second ring 12" ,
+      link: "" },
+    { title: "DrGENIE", 
+      info: "Stray idea 1" ,
+      link: "" },
+    { title: "GENIE", 
+      info: "Stray idea 2" ,
+      link: "" },
+    { title: "Student union", 
+      info: "Stray idea 3" ,
+      link: "" },
+    { title: "DOMB", 
+      info: "Stray idea 4",
+      link: ""  },
+    { title: "PhD student council",
+      info: "Stray idea 5" ,
+      link: "" }
+  ];
+
+  
+
+  let cardNum = 1;
+
+  rings.forEach(({ count, radius }) => {
+    for (let i = 0; i < count; i++) {
+      const angle = (2 * Math.PI / count) * i;
+      var r = radius * hexRadius;
+      if (radius == 2 && cardNum % 2 == 1) {
+        r = r-30;
+      }
+      const x = centerX + r * Math.cos(angle) - hexRadius/2;
+      const y = centerY + r * Math.sin(angle) - hexRadius/2;
+
+      const hex = document.createElement('div');
+      hex.className = 'hexagon';
+      hex.style.left = `${x}px`;
+      hex.style.top = `${y}px`;
+      //hex.onclick = () => hex.classList.toggle('flipped');
+
+      const title = cardsContent[cardNum-1].title;
+      const info = cardsContent[cardNum-1].info;
+      const link = cardsContent[cardNum-1].link;
+
+      hex.innerHTML = `
+        <div class="hex-inner">
+          <div class="hex-face front-radius-${radius}">${title}</div>
+          <div class="hex-face hex-back">
+            <p>${info}</p>
+            <a href=${link} target="_blank" rel="noopener noreferrer">Read more</a>
+          </div>
+        </div>`;
+
+      hex.onclick = (e) => {
+        // Skip toggle if the click originated inside a link
+        if (e.target.tagName.toLowerCase() === 'a') return;
+            hex.classList.toggle('flipped');
+      };
+      
+      container.appendChild(hex);
+      cardNum++;
+    }
+  });
+
+  // Add stray cards
+  const strayPositions = [
+    { x: centerX - 500, y: centerY - 250 },
+    { x: centerX - 420, y: centerY - 300 },
+    { x: centerX + 300, y: centerY - 300 },
+    { x: centerX + 380, y: centerY - 250 },
+    { x: centerX - 480, y: centerY + 200 },
+  ];
+
+  strayPositions.forEach(pos => {
+    const hex = document.createElement('div');
+    hex.className = 'hexagon';
+    hex.style.left = `${pos.x}px`;
+    hex.style.top = `${pos.y}px`;
+    hex.onclick = () => hex.classList.toggle('flipped');
+
+    const title = cardsContent[cardNum-1].title;
+    const info = cardsContent[cardNum-1].info;
+
+    hex.innerHTML = `
+      <div class="hex-inner">
+        <div class="hex-face front-stray">${title}</div>
+        <div class="hex-face hex-back">${info}</div>
+      </div>
+    `;
+    container.appendChild(hex);
+    cardNum++;
+  });
+
+  // Add click zones around big hex
+  // Edge 1 is the lower right edge, then continue clock-wise
+  const infoTexts = [
+    { title: "Deputy president of doctoral studies", info: "Main hub" , edge: 4},
+    { title: "FUN", info: "First ring 1", edge: 1 }
+  ];
+
+  const radius = 290;
+  //for (let i = 0; i < 6; i++) {
+  infoTexts.forEach(({ title, info, edge }) => {
+    const angle = (Math.PI / 3) * edge - Math.PI / 6;
+    const x = centerX + radius * Math.cos(angle) - 250;
+    const y = centerY + radius * Math.sin(angle) - 50;
+
+    const zone = document.createElement('div');
+    zone.className = 'click-zone';
+    zone.style.left = `${x}px`;
+    zone.style.top = `${y}px`;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'info-bubble';
+    bubble.innerText = info;
+    container.appendChild(bubble);
+
+     // Add visible label inside zone
+    const label = document.createElement('div');
+    label.textContent = title;
+    const textAngle = -60;
+    label.style.cssText = `
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%) rotate(${textAngle}deg);
+        color: #6a4c93;
+        font-size: 14px;
+        font-weight: bold;
+        pointer-events: none;
+        text-align: center;
+    `;
+    zone.appendChild(label);
+
+    zone.addEventListener('click', () => {
+        const bubblex = centerX + (radius+80) * Math.cos(angle);
+        const bubbley = centerY + (radius+80) * Math.sin(angle);
+      bubble.style.left = `${bubblex - 50}px`;
+      bubble.style.top = `${bubbley - 75}px`;
+      bubble.classList.toggle('visible');
+      document.querySelectorAll('.info-bubble').forEach(b => {
+        if (b !== bubble) b.classList.remove('visible');
+      });
+    });
+
+    container.appendChild(zone);
+  });
+
+</script>
+
+</body>
+</html>
