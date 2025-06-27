@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Interactive Honeycomb Grid</title>
+  <title>DrGENIE's PhD Ecosystem</title>
   <style>
     body {
       background: #f8f9fa;
@@ -396,6 +396,17 @@
       document.querySelectorAll('.info-bubble').forEach(b => {
         if (b !== bubble) b.classList.remove('visible');
       });
+    });
+
+    document.addEventListener('click', (e) => {
+      // Check if the click was inside any click-zone or info-bubble
+      const clickedInside = e.target.closest('.click-zone') || e.target.closest('.info-bubble');
+      
+      if (!clickedInside) {
+        document.querySelectorAll('.info-bubble').forEach(b => {
+          b.classList.remove('visible');
+        });
+      }
     });
 
     container.appendChild(zone);
