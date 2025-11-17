@@ -1,479 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>DrGENIE's PhD Ecosystem</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The PhD Ecosystem</title>
   <style>
-    /* Full-page layout */
     body {
-      background: #f8f9fa;
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      background: #f6f6f6;
+      color: #333;
     }
-
-    /* Flex container for sidebar + content */
-    .layout {
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    /* Sidebar on the left */
-    .sidebar {
-        width: 320px;          /* Fixed width */
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        background-color: white;
-        overflow: auto;
-    }
-
-    /* Help bubble styling */
-    .help-bubble {
-      background: rgba(36, 59, 151, 0.85);
-      max-width: 270px;
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      z-index: 10;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    /* Logo styling */
-    .logo {
-        width: 230px;
-        height: auto;
-    }
-
-    /* Main content (hex grid area) */
-    .main-content {
-        flex: 1;
-        overflow: auto;
-        position: relative;
-        background: #ffffff;
-    }
-
-    /* Hex grid (style as needed) */
-    .hex-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        padding: 40px;
-    }
-
-    /* Big background hex */
-    .big-hex {
-      position: absolute;
-      width: 700px;
-      height: 700px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-29%, -50%) rotate(90deg);
-      background: #fcc6f1;
-      clip-path: polygon(
-        50% 0%, 93% 25%, 93% 75%,
-        50% 100%, 7% 75%, 7% 25%
-      );
-      z-index: 0;
-    }
-
-    .hexagon {
-      width: 120px;
-      height: 120px;
-      position: absolute;
-      perspective: 1000px;
-      z-index: 2;
-      cursor: pointer;
-    }
-
-    .hex-inner {
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform 0.6s;
-      position: relative;
-    }
-
-    .hexagon.flipped .hex-inner {
-      transform: rotateY(180deg);
-    }
-
-    .hex-face {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      backface-visibility: hidden;
-      clip-path: polygon(
-        50% 0%, 93% 25%, 93% 75%,
-        50% 100%, 7% 75%, 7% 25%
-      );
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      box-sizing: border-box;
-      color: #fff;
-      font-weight: bold;
+    header {
       text-align: center;
+      padding: 40px 20px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
-    .front-radius-0 {
-      background-color: #fed12d;
-      font-size: 16px;
+    header img {
+      max-width: 300px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-
-    .front-radius-1 {
-      background-color: #fa59fa;
-      font-size: 15px;
+    header h1 {
+      margin-top: 20px;
+      font-size: 2rem;
     }
-
-    .front-radius-2 {
-      background-color: #fe86fe;
-      font-size: 14px;
+    header p {
+      max-width: 600px;
+      margin: 10px auto 0 auto;
+      font-size: 1rem;
+      line-height: 1.4;
     }
-
-    .front-stray {
-      background-color: #86a8fe;
-      font-size: 14px;
+    .links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1100px;
+      margin: auto;
     }
-
-    .hex-back {
-      background-color: #6a4c93;
-      transform: rotateY(180deg);
-      font-weight: normal;
-      font-size: 8px;
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-
-    .hex-back a {
-        display: block;        /* forces it to be on its own line */
-        margin-top: 2px;      /* gives it space from the paragraph */
-        color: #00ccff;
-        text-decoration: underline;
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-
-    .click-zone {
-      position: absolute;
-      width: 500px;
-      height: 100px;
-      background: transparent;
-      cursor: pointer;
-      z-index: 1;
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
     }
-
-    .info-bubble {
-      position: absolute;
-      max-width: 250px;        /* or whatever width suits your layout */
-      white-space: normal;     /* ensures long lines wrap */
-      background: #333;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      z-index: 3;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
+    .card p {
+      font-size: 0.95rem;
+      line-height: 1.3;
     }
-
-    .info-bubble.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .info-bubble a {
-        display: block;        /* forces it to be on its own line */
-        margin-top: 2px;      /* gives it space from the paragraph */
-        color: #00ccff;
-        text-decoration: underline;
-    }
-
   </style>
 </head>
-
 <body>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="help-bubble">
-        <h4>🐝 Welcome to the PhD Ecosystem! 🐝</h4>
-        <p>This is a resource created by DrGENIE to provide an overview of the support system surrounding doctoral students at Chalmers.</p>
-        How to interpret the resource:
-        <ul>
-            <li>In the inner circle (magenta), immediately surrounding the PhD student (yellow), we have the roles a PhD student is expected to have closest contact with during their years at Chalmers.</li>
-            <li>In the outer circle (lighter magenta), we find additional resources available to a PhD student if (or should we say when…) their PhD journey takes an unexpected turn.</li>
-            <li>Outside of the honeycomb we find a few additional resources (lavender) that do not have any formal responsibilities toward the PhD student, but may still provide support in times of need and channels for PhD students to influence their work environment.</li>
-            <li>Click on any title and zoom in to learn more about their role in your PhD journey.</li>
-        </ul>
-        
-        <p>Do you know who the person behind each role is in your personal ecosystem?</p>
-        <p>Note! We have tried to reflect the overarching structure of the support system surrounding a PhD student, but some variation may occur between departments.</p>
-      </div>
-      <img src="DrGENIE logo.png" alt="Logo" class="logo" />
-    </aside>
+  <a href="https://mramne.github.io/" style="position:absolute; top:20px; left:20px; text-decoration:none; background:white; padding:10px 16px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.15); color:#333; font-size:0.9rem;">← Back</a>
+  <header>
+    <h1>The PhD Ecosystem</h1>
+    <p>
+      This project was born out of frustration with the lack of clarity in roles and resources related to PhD students at Chalmers.
+      Together with colleagues in DrGENIE, a doctoral student organisation working for gender equity at Chalmers, we developed a web application to map and visualize the PhD ecosystem,
+      aiming to enhance understanding and support for PhD students at Chalmers throughout their journey.
+    </p>
+  </header>
 
-    <main class="main-content">
-      <div class="hex-grid" id="honeycomb">
-        <div class="big-hex" id="bighex"></div>
-        <!-- your hexagons go here -->
-      </div>
-    </main>
-  </div>
+  <section class="links">
+    <a class="card" href="local-version.html">
+      <img src="phd-ecosystem.png" alt="PhD Ecosystem" style="width:100%; border-radius:12px; margin-bottom:12px;" />
+      <h2>The PhD Ecosystem</h2>
+    </a>
 
-  <script>
-    const container = document.getElementById('honeycomb');
-    const hexRadius = 120;
-    const bighexRadius = 700;
-    const centerX = 500;
-    const centerY = 350;
+    <a class="card" href="https://www.linkedin.com/company/chalmers-dr-genie">
+      <img src="drgenie.png" alt="DrGENIE" style="width:100%; border-radius:12px; margin-bottom:12px;" />
+      <h2>DrGENIE on LinkedIn</h2>
+    </a>
 
-    const bighex = document.getElementById('bighex');
-    bighex.style.left = `${centerX-150}px`;
-    bighex.style.top = `${centerY}px`;
-
-
-    const rings = [
-        { count: 1, radius: 0 },
-        { count: 6, radius: 1 },
-        { count: 12, radius: 2 }
-    ];
-
-    const cardsContent = [
-        { title: "PhD student", 
-        info: "This is you, the main character of your very own PhD journey!",
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#doctoral-student-0"},
-        { title: "Examiner", 
-        info: "ISP follow-up, approving course work, approving the licentiate thesis or midterm seminar, approving that the doctoral student is ready to go ahead with their defence.",
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#examiner-3"},
-        { title: "Director of doctoral studies", 
-        info: "Conduct annuals ISP meetings, monitor and report abnormalities in progression of doctoral studies, development of the graduate school.",
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#director-of-studies-4" },
-        { title: "Study admin", 
-        info: "Registering course work in Ladok, booking dates and locations for licentiate presentation, midterm seminar and doctoral defence.",
-        link: "https://intranet.chalmers.se/en/tools-support/doctoral-studies-support/" },
-        { title: "Line manager", 
-        info: "Responsible for PhD students as employees, conduct annual appraisals, approve vacation days, obligated to follow up on misconduct or irregularities in the workplace.",
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/my-employment/being-employed/the-role-of-a-manager/" },
-        { title: "Main supervisor", 
-        info: "Guide research, provide feedback, define goals, ISP follow-up, networking in the scientific community, ensure funding for the PhD student.",
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#main-supervisor-1" },
-        { title: "Assistant supervisor",
-        info: "PhD students shall have at least one assistant supervisor who can contribute with experience or expertise related to their research.",
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#assistant-supervisor-2" },
-        { title: "Equality office", 
-        info: "Coordinates the equality representatives and works closely with the GENIE initiative, student support services and departments that provide equality training.",
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/health-safety-environment/work-environment-and-equality/equality/#organisation-and-responsibility-2" },
-        { title: "Kurator", 
-        info: "PhD students can contact the kurator, for example if a situation arises where you cannot or do not want to turn to your manager in the first instance.",
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/my-employment/health-ergonomics/occupational-health-service/#counselling-for-doctoral-students-2"  },
-        { title: "Occupational health provider", 
-        info: "Resoruces if you experience physical or psychological health issues that may be related to your work situation.",
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/my-employment/health-ergonomics/occupational-health-service/"  },
-        { title: "Disability study support",
-        info: "Students with functional impairment can apply for educational support at Chalmers through the coordinators of Disability study support.",
-        link: "https://intranet.chalmers.se/en/tools-support/educational-support/support-communication/students-with-disabilities-and-accommodations/" },
-        { title: "Economists\nAdministrators\nLab managers\nIT-support", 
-        info: "Additional personnel that can support you with issues specific to economy, administration, labs or IT." ,
-        link: "https://intranet.chalmers.se/en/tools-support/general-support-services/" },
-        { title: "HR partner", 
-        info: "Supports managers in HR processes, operationally and strategically." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation-chart/hr-office---8920000198" },
-        { title: "Vice head of department", 
-        info: "Appoint supervisors and examiner or changes thereof, approve the faculty opponent and the members of the grading committee for doctoral defence." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#deputy-head-of-department-5" },
-        { title: "Head of department", 
-        info: "Responsible for the department and for issues that cannot be resolved at individual, unit or division-level." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation/department-management/department-management-group/" },
-        { title: "Head of division/\nunit", 
-        info: "Has the overarching responsibility of the activities and employees of the division or unit." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/organisation-chart/president---8920000202" },
-        { title: "Safety representative", 
-        info: "Help resolve issues related to work environment, both physical and psychosocial." ,
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/health-safety-environment/systematic-work-environment-management/collaboration-and-resources-for-work-environment-management/#safety-representatives-1" },
-        { title: "Union representative", 
-        info: "Has prominent influence in representing employees' interests in the Swedish workplace. Chalmers has agreement on collaboration with SACO, SEKO and ST." ,
-        link: "https://ingenjoren.se/2024/10/10/what-do-you-know-about-the-swedish-labour-market-model/" },
-        { title: "Equality representative", 
-        info: "Support in issues related to equality and fair treatment in the workplace." ,
-        link: "https://intranet.chalmers.se/en/working-at-chalmers/health-safety-environment/work-environment-and-equality/equality/#organisation-and-responsibility-2" },
-        { title: "GENIE", 
-        info: "The GENIE initiative aims to even out the gender balance in the faculty. Each department has one GENIE representative." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/plan-manage-and-develop-operations/foundations-s-initiatives/foundation-s-initiative-genie-gender-initiative-for-excellence/" },
-        { title: "DrGENIE", 
-        info: "DrGENIE is a doctoral student branch of the GENIE initiative, striving for an equitable workplace for all at Chalmers. Each department has one DrGENIE representative." ,
-        link: "https://intranet.chalmers.se/en/about-chalmers/plan-manage-and-develop-operations/foundations-s-initiatives/foundation-s-initiative-genie-gender-initiative-for-excellence/#doctoral-student-network-dr-genie-7" },
-        { title: "Student union/DS", 
-        info: "Represents PhD students in several key boards and committees, and strives to identify, prevent and eliminate structural problems." ,
-        link: "https://www.dokt.chs.chalmers.se/" },
-        { title: "DOMB", 
-        info: "Is employed by the Student Union and can provide independent and impartial support with problems relating to doctoral studies or employment.",
-        link: "https://www.dokt.chs.chalmers.se/support-for-phd-students/doktorandombudet-domb/"  },
-        { title: "PhD student council",
-        info: "The local PhD student councils represent doctoral students on the department's board and other decision-making and executive groups." ,
-        link: "https://intranet.chalmers.se/en/tools-support/doctoral-studies-support/regulation-and-administration/doctoral-student-influence/#phd-councils-3" }
-    ];
-
-    
-
-    let cardNum = 1;
-
-    rings.forEach(({ count, radius }) => {
-        for (let i = 0; i < count; i++) {
-        const angle = (2 * Math.PI / count) * i;
-        var r = radius * hexRadius;
-        if (radius == 2 && cardNum % 2 == 1) {
-            r = r-30;
-        }
-        const x = centerX + r * Math.cos(angle) - hexRadius/2;
-        const y = centerY + r * Math.sin(angle) - hexRadius/2;
-
-        const hex = document.createElement('div');
-        hex.className = 'hexagon';
-        hex.style.left = `${x}px`;
-        hex.style.top = `${y}px`;
-
-        const title = cardsContent[cardNum-1].title;
-        const info = cardsContent[cardNum-1].info;
-        const link = cardsContent[cardNum-1].link;
-
-        hex.innerHTML = `
-            <div class="hex-inner">
-            <div class="hex-face front-radius-${radius}">${title}</div>
-            <div class="hex-face hex-back">
-                <p>${info}</p>
-                <a href=${link} target="_blank" rel="noopener noreferrer">Read more</a>
-            </div>
-            </div>`;
-
-        hex.onclick = (e) => {
-            // Skip toggle if the click originated inside a link
-            if (e.target.tagName.toLowerCase() === 'a') return;
-                hex.classList.toggle('flipped');
-        };
-        
-        container.appendChild(hex);
-        cardNum++;
-        }
-    });
-
-    // Add stray cards
-    const strayPositions = [
-        { x: centerX - 420, y: centerY - 300 },
-        { x: centerX - 500, y: centerY - 250 },
-        { x: centerX + 300, y: centerY - 300 },
-        { x: centerX + 380, y: centerY - 250 },
-        { x: centerX - 480, y: centerY + 200 },
-    ];
-
-    strayPositions.forEach(pos => {
-        const hex = document.createElement('div');
-        hex.className = 'hexagon';
-        hex.style.left = `${pos.x}px`;
-        hex.style.top = `${pos.y}px`;
-        hex.onclick = () => hex.classList.toggle('flipped');
-
-        const title = cardsContent[cardNum-1].title;
-        const info = cardsContent[cardNum-1].info;
-        const link = cardsContent[cardNum-1].link;
-
-        hex.innerHTML = `
-        <div class="hex-inner">
-            <div class="hex-face front-stray">${title}</div>
-            <div class="hex-face hex-back">
-                <p>${info}</p>
-                <a href=${link} target="_blank" rel="noopener noreferrer">Read more</a>
-            </div>
-        </div>
-        `;
-        hex.onclick = (e) => {
-            // Skip toggle if the click originated inside a link
-            if (e.target.tagName.toLowerCase() === 'a') return;
-                hex.classList.toggle('flipped');
-        };
-        container.appendChild(hex);
-        cardNum++;
-    });
-
-    // Add click zones around big hex
-    // Edge 1 is the lower right edge, then continue clock-wise
-    const infoTexts = [
-        { title: "Deputy president of doctoral studies", 
-        info: "The Deputy President ''responsible for the development of the academic environment and excellence in research, education and utilisation, including doctoral education'' (Susanne Aalto) has the overall responsibility for the development and quality of doctoral studies at Chalmers.", 
-        edge: 4, 
-        link : "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/roles-and-responsibilities-in-doctoral-studies/#deputy-president-for-doctoral-studies-7"},
-        { title: "FUN", 
-        info: "The Doctoral programmes committee (Forskarutbildningsnämnden, FUN) is advisory and handles doctoral-related issues centrally at Chalmers. The Doctoral programmes committee assembles four times per semester. ", 
-        edge: 1, 
-        link : "https://intranet.chalmers.se/en/about-chalmers/organisation/doctoral-studies/organisation-of-doctoral-programmes/#doctoral-programmes-committee-0" }
-    ];
-
-    const radius = 290;
-    //for (let i = 0; i < 6; i++) {
-    infoTexts.forEach(({ title, info, edge, link }) => {
-        const angle = (Math.PI / 3) * edge - Math.PI / 6;
-        const x = centerX + radius * Math.cos(angle) - 250;
-        const y = centerY + radius * Math.sin(angle) - 50;
-
-        const zone = document.createElement('div');
-        zone.className = 'click-zone';
-        zone.style.left = `${x}px`;
-        zone.style.top = `${y}px`;
-
-        const bubble = document.createElement('div');
-        bubble.className = 'info-bubble';
-        //bubble.innerText = info;
-        bubble.innerHTML = `
-        <p>${info}</p>
-        <a href=${link} target="_blank" rel="noopener noreferrer">Read more</a>
-        `;
-        container.appendChild(bubble);
-
-        // Add visible label inside zone
-        const label = document.createElement('div');
-        label.textContent = title;
-        const textAngle = -60;
-        label.style.cssText = `
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(${textAngle}deg);
-            color: #6a4c93;
-            font-size: 14px;
-            font-weight: bold;
-            pointer-events: none;
-            text-align: center;
-        `;
-        zone.appendChild(label);
-
-        zone.addEventListener('click', () => {
-            const bubblex = centerX + (radius+80) * Math.cos(angle);
-            const bubbley = centerY + (radius+80) * Math.sin(angle);
-        bubble.style.left = `${bubblex - 50}px`;
-        bubble.style.top = `${bubbley - 75}px`;
-        bubble.classList.toggle('visible');
-        document.querySelectorAll('.info-bubble').forEach(b => {
-            if (b !== bubble) b.classList.remove('visible');
-        });
-        });
-
-        document.addEventListener('click', (e) => {
-        // Check if the click was inside any click-zone or info-bubble
-        const clickedInside = e.target.closest('.click-zone') || e.target.closest('.info-bubble');
-        
-        if (!clickedInside) {
-            document.querySelectorAll('.info-bubble').forEach(b => {
-            b.classList.remove('visible');
-            });
-        }
-        });
-
-        container.appendChild(zone);
-    });
-
-    </script>
+  </section>
 </body>
 </html>
