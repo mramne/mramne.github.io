@@ -3,58 +3,669 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to the Malin Ramne's GitHub page</title>
+  <title>Malin Ramne — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F6F2;
+      --surface: #ECEEE8;
+      --ink: #18201A;
+      --ink-soft: #5A6660;
+      --accent: #3A7D5A;
+      --accent-light: #E2EDE7;
+      --accent-dim: #2D6147;
+      --border: #D4DAD6;
+      --radius: 5px;
+      --max: 880px;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #316a35, #3c8140);
-      color: white;
-      text-align: center;
-      padding: 20px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .container {
-      max-width: 600px;
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.3rem 3rem;
+      background: rgba(245,246,242,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
     }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-    }
-
-    a.button {
-      display: inline-block;
-      padding: 12px 24px;
-      background: #dac807;
-      color: white;
+    nav.scrolled { border-color: var(--border); }
+    .nav-logo {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      color: var(--ink);
       text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: background 0.3s;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--ink-soft);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    section { padding: 6rem 3rem; max-width: var(--max); margin: 0 auto; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 4rem;
+      padding-top: 7rem;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent-light);
+      border: 1px solid #B8D4C4;
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.75rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 1.6rem;
+      opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; }
+    h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2.6rem, 5.5vw, 4rem);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      opacity: 0; animation: fadeUp 0.6s 0.22s forwards;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .hero-role {
+      margin-top: 0.6rem;
+      font-size: 1rem;
+      color: var(--ink-soft);
+      opacity: 0; animation: fadeUp 0.6s 0.34s forwards;
+    }
+    .hero-affiliation {
+      margin-top: 0.2rem;
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-weight: 400;
+      opacity: 0; animation: fadeUp 0.6s 0.4s forwards;
+    }
+    .hero-bio {
+      margin-top: 1.6rem;
+      font-size: 0.97rem;
+      color: var(--ink-soft);
+      max-width: 50ch;
+      opacity: 0; animation: fadeUp 0.6s 0.48s forwards;
+    }
+    .hero-actions {
+      margin-top: 2.2rem;
+      display: flex; gap: 0.8rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.6s 0.58s forwards;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.65rem 1.5rem;
+      border-radius: var(--radius);
+      font-size: 0.82rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-dim); }
+    .btn-ghost { border-color: var(--border); color: var(--ink-soft); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-carousel {
+        position: relative;
+        width: 260px;
+        height: 320px;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 2px solid var(--border);
+        background: var(--surface);
+        box-shadow: 0 12px 32px rgba(24,32,26,0.08);
+        flex-shrink: 0;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.3s forwards;
+        }
+
+        .hero-carousel-track {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        }
+
+        .hero-carousel-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 0.45s ease;
+        }
+
+        .hero-carousel-image.active {
+        opacity: 1;
+        }
+
+        .hero-carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(255,255,255,0.65);
+        border-radius: 50%;
+        background: rgba(255,255,255,0.78);
+        color: var(--ink);
+        font-size: 1.2rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        z-index: 2;
+        }
+
+        .hero-carousel-btn:hover {
+        background: rgba(255,255,255,0.95);
+        color: var(--accent);
+        }
+
+        .hero-carousel-btn.prev { left: 0.75rem; }
+        .hero-carousel-btn.next { right: 0.75rem; }
+
+        .hero-carousel-dots {
+        position: absolute;
+        left: 50%;
+        bottom: 0.9rem;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.45rem;
+        z-index: 2;
+        }
+
+        .hero-carousel-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255,255,255,0.55);
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+        }
+
+        .hero-carousel-dot.active {
+        background: white;
+        transform: scale(1.15);
     }
 
-    a.button:hover {
-      background: #00aacc;
+    /* ── SECTION HEADER ── */
+    .section-label {
+      font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.7rem, 3.5vw, 2.3rem);
+      letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .divider { width: 36px; height: 2px; background: var(--accent); margin: 1.2rem 0 2.2rem; }
+
+    /* ── RESEARCH ── */
+    #research { border-top: 1px solid var(--border); }
+    .pub-list { display: flex; flex-direction: column; }
+    .pub-item {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr;
+      gap: 1.4rem;
+      padding: 1.6rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .pub-year {
+      font-family: 'Lora', serif;
+      font-size: 0.95rem;
+      color: var(--accent);
+      padding-top: 0.15rem;
+    }
+    .pub-title {
+      font-family: 'Lora', serif;
+      font-size: 1rem; font-weight: 600;
+      line-height: 1.4; margin-bottom: 0.25rem;
+    }
+    .pub-authors { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.15rem; }
+    .pub-venue { font-size: 0.82rem; color: var(--ink-soft); font-style: italic; }
+    .pub-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .pub-tag {
+      padding: 0.15rem 0.65rem; border-radius: 100px;
+      font-size: 0.7rem;
+      background: var(--accent-light); color: var(--accent-dim);
+      border: 1px solid #B8D4C4;
+    }
+    .pub-links { display: flex; gap: 0.8rem; margin-top: 0.7rem; }
+    .pub-link {
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--accent); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      transition: color 0.2s;
+    }
+    .pub-link:hover { color: var(--accent-dim); }
+
+    /* ── ABOUT ── */
+    #about { border-top: 1px solid var(--border); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; margin-top: 2rem; align-items: start;
+    }
+    .about-text p { color: var(--ink-soft); margin-bottom: 0.9rem; font-size: 0.95rem; }
+    .cv-block { margin-top: 2rem; }
+    .cv-block h3 { font-family: 'Lora', serif; font-size: 1rem; margin-bottom: 0.8rem; }
+    .cv-entry {
+      padding: 0.9rem 0; border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;
+    }
+    .cv-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); margin-top: 0.55rem; flex-shrink: 0;
+    }
+    .cv-title { font-weight: 500; font-size: 0.9rem; }
+    .cv-sub { font-size: 0.82rem; color: var(--ink-soft); }
+    .skills-wrap { margin-top: 2rem; }
+    .skills-wrap h3 { font-family: 'Lora', serif; font-size: 1rem; margin-bottom: 0.8rem; }
+    .skills-list { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skills-list li {
+      padding: 0.28rem 0.8rem; border: 1px solid var(--border);
+      border-radius: 100px; font-size: 0.78rem; color: var(--ink-soft);
+      transition: all 0.2s;
+    }
+    .skills-list li:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── PROJECTS ── */
+    #projects { border-top: 1px solid var(--border); }
+    .projects-intro { font-size: 0.92rem; color: var(--ink-soft); max-width: 60ch; margin-bottom: 2.5rem; }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.2rem;
+    }
+    .project-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.8rem;
+      transition: transform 0.22s, box-shadow 0.22s;
+      display: flex; flex-direction: column;
+    }
+    .project-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(24,32,26,0.07);
+    }
+    .project-icon {
+      width: 42px; height: 42px; background: var(--accent-light);
+      border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.3rem; margin-bottom: 1.1rem;
+    }
+    .project-type {
+      font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.35rem;
+    }
+    .project-name { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .project-desc { font-size: 0.87rem; color: var(--ink-soft); flex: 1; margin-bottom: 1.2rem; }
+    .project-stack { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .stack-tag {
+      padding: 0.15rem 0.6rem; border-radius: 4px;
+      font-size: 0.7rem; background: var(--bg); border: 1px solid var(--border); color: var(--ink-soft);
+    }
+    .project-link {
+      font-size: 0.8rem; font-weight: 500; color: var(--accent);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: color 0.2s;
+    }
+    .project-link:hover { color: var(--accent-dim); }
+    .project-link svg { transition: transform 0.18s; }
+    .project-link:hover svg { transform: translate(2px, -2px); }
+
+    /* ── CONTACT ── */
+    #contact { border-top: 1px solid var(--border); text-align: center; }
+    #contact p { color: var(--ink-soft); max-width: 46ch; margin: 0 auto 2.2rem; font-size: 0.95rem; }
+    .contact-grid { display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
+    .contact-tile {
+      display: flex; align-items: center; gap: 0.55rem;
+      padding: 0.7rem 1.4rem; border: 1px solid var(--border);
+      border-radius: var(--radius); text-decoration: none;
+      color: var(--ink-soft); font-size: 0.83rem;
+      transition: all 0.2s; background: var(--surface);
+    }
+    .contact-tile:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 1.8rem 3rem;
+      max-width: var(--max); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.78rem; color: var(--ink-soft);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 1.1rem 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+      #hero { grid-template-columns: 1fr; padding-top: 7rem; }
+      .hero-carousel {
+        width: 100%;
+        max-width: 320px;
+        height: 360px;
+        margin: 0 auto;
+        }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.4rem; text-align: center; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome to Malin Ramne's GitHub page</h1>
-    <p>Select one of the buttons below to explore some of my pet projects through the years.</p>
-    <a href="phd-ecosystem/main.html" class="button">PhD Ecosystem</a>
-    <a href="dressyrappen/main.html" class="button">Dressyrappen</a>
-    <a href="iquusen/main.html" class="button">iQuusen</a>
-  </div>
+
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">Malin Ramne</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div>
+      <div class="hero-badge">Open to work</div>
+      <h1>Malin Ramne</h1>
+      <p class="hero-role">PhD in Electrical Engineering (on paper).</p>
+      <p class="hero-affiliation">Computational Neuroscience (in practice).</p>
+      <div class="hero-actions">
+        <a href="https://orcid.org/0000-0001-8021-5420" class="btn btn-ghost">View Research</a>
+        <a href="CV_Malin.pdf" class="btn btn-ghost">Download CV</a>
+        <a href="#contact" class="btn btn-ghost">Contact</a>
+      </div>
+    </div>
+    <div class="hero-carousel" aria-label="Photo carousel">
+        <div class="hero-carousel-track">
+            <img src="images/proper.jpg" alt="portrait" class="hero-carousel-image active">
+            <img src="images/mountain.jpg" alt="outdoors" class="hero-carousel-image">
+            <img src="images/dog.jpg" alt="with dog" class="hero-carousel-image">
+            <img src="images/horse.jpg" alt="with horse" class="hero-carousel-image">
+        </div>
+
+        <button class="hero-carousel-btn prev" aria-label="Previous image">‹</button>
+        <button class="hero-carousel-btn next" aria-label="Next image">›</button>
+
+        <div class="hero-carousel-dots" aria-label="Carousel navigation">
+            <button class="hero-carousel-dot active" aria-label="Go to image 1"></button>
+            <button class="hero-carousel-dot" aria-label="Go to image 2"></button>
+            <button class="hero-carousel-dot" aria-label="Go to image 3"></button>
+            <button class="hero-carousel-dot" aria-label="Go to image 4"></button>
+        </div>
+    </div>
+  </section>
+  
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label reveal">About</p>
+    <h2 class="reveal">Background & Experience</h2>
+    <div class="divider reveal"></div>
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="about-text">
+          <p>My research focuses on <a href="https://research.chalmers.se/en/publication/550780" style="color:#3A7D5A">using mathematical models to advance the understanding of phantom limb pain.</a></p>
+          <p>Prior to my PhD, I completed a Master's degree in Engineering Physics with a specialization in Complex Adaptive Systems.</p>
+          <p>Outside of work I enjoy running, spending time with my horse and my dogs, and listening to live music.</p>
+        </div>
+        <div class="skills-wrap">
+          <h3>Technical skills</h3>
+          <ul class="skills-list">
+            <li>Python</li><li>Matlab</li><li>Statistical analysis</li><li>Mathematical and computational modeling</li>
+            <li>Data visualisation</li><li>LaTeX</li><li>Git</li><li>iOS and Android development</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="cv-block">
+          <h3>Education</h3>
+          <div class="cv-entry">
+            <div class="cv-dot"></div>
+            <div>
+              <div class="cv-title">PhD in Electrical Engineering <span style="color:var(--ink-soft);font-weight:300">· 2021–2026</span></div>
+              <div class="cv-sub">Chalmers University of Technology</div>
+            </div>
+          </div>
+          <div class="cv-entry">
+            <div class="cv-dot"></div>
+            <div>
+              <div class="cv-title">MSc in Engineering Physics <span style="color:var(--ink-soft);font-weight:300">· 2015–2020</span></div>
+              <div class="cv-sub">Chalmers University of Technology</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cv-block" style="margin-top:2rem;">
+          <h3>Experience</h3>
+          <div class="cv-entry">
+            <div class="cv-dot"></div>
+            <div>
+              <div class="cv-title">Software Developer <span style="color:var(--ink-soft);font-weight:300">· Summer 2020</span></div>
+              <div class="cv-sub">Equilly AB</div>
+            </div>
+          </div>
+          <div class="cv-entry">
+            <div class="cv-dot"></div>
+            <div>
+              <div class="cv-title"> Instrumentation & Component Testing <span style="color:var(--ink-soft);font-weight:300">· 2018 & 2019</span></div>
+              <div class="cv-sub">GKN Aerospace – Summer internship</div>
+            </div>
+          </div>
+          <div class="cv-entry">
+            <div class="cv-dot"></div>
+            <div>
+              <div class="cv-title"> Sole Proprietorship <span style="color:var(--ink-soft);font-weight:300">· 2017-2020</span></div>
+              <div class="cv-sub">iQuusen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDE PROJECTS -->
+  <section id="projects">
+    <p class="section-label reveal">Other projects</p>
+    <h2 class="reveal">Beyond the Lab</h2>
+    <div class="divider reveal"></div>
+    <p class="projects-intro reveal">Beyond research, here are some other projects I have worked on throughout the years.</p>
+
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-type">DEI</div>
+        <div class="project-name">DrGENIE & The PhD Ecosystem</div>
+        <div class="project-desc">DrGENIE is a doctoral student organisation working for gender equity at Chalmers. We developed a web application to visualize supportsystem available to PhD students.</div>
+        <div class="project-stack">
+          <span class="stack-tag">DEI</span>
+          <span class="stack-tag">Communication</span>
+          <span class="stack-tag">HTML</span>
+        </div>
+        <a href="phd-ecosystem/main.html" class="project-link">View</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-type">Teaching</div>
+        <div class="project-name">iQuusen</div>
+        <div class="project-desc">Initially an initiative to promote interest in math and science among equestrians, later the name of my sole proprietorship.</div>
+        <div class="project-stack">
+          <span class="stack-tag">Teaching</span>
+          <span class="stack-tag">Mathematics</span>
+          <span class="stack-tag">Equestrian</span>
+        </div>
+        <a href="iquusen/main.html" class="project-link">View [Swe]</a>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-type">App development</div>
+        <div class="project-name">Dressyrappen</div>
+        <div class="project-desc">An app for real-time commentating at equestrian dressage events.</div>
+        <div class="project-stack">
+          <span class="stack-tag">iOS</span>
+          <span class="stack-tag">Android</span>
+          <span class="stack-tag">Equestrian</span>
+        </div>
+        <a href="dressyrappen/main.html" class="project-link">View [Swe]</a>
+      </div>
+
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label reveal">Contact</p>
+    <h2 class="reveal">Get in touch</h2>
+    <div class="divider reveal" style="margin-left:auto;margin-right:auto;"></div>
+    <p class="reveal">I'm always happy to chat about research, potential collaborations, or just interesting ideas.</p>
+    <div class="contact-grid reveal">
+      <a href="mailto:malin@ramne.com" class="contact-tile">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M1 3.5L7.5 9L14 3.5M1 3h13v9H1V3Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        malin(at)ramne.com
+      </a>
+      <a href="https://scholar.google.com/citations?user=y2G9AFoAAAAJ&hl" class="contact-tile" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 100 14 7 7 0 000-14z"/></svg>
+        Google Scholar
+      </a>
+      <a href="https://www.linkedin.com/in/malin-ramne-a69b85133/" class="contact-tile" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zm2-3a2 2 0 100-4 2 2 0 000 4z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://bsky.app/profile/mramne.bsky.social" class="contact-tile" target="_blank">
+        Bluesky
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Malin Ramne</span>
+  </footer>
+
+  <script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  const reveals = document.querySelectorAll('.reveal');
+  const seen = new WeakSet();
+  const observer = new IntersectionObserver(entries => {
+    let delay = 0;
+    entries.forEach(e => {
+      if (e.isIntersecting && !seen.has(e.target)) {
+        seen.add(e.target);
+        setTimeout(() => e.target.classList.add('visible'), delay);
+        delay += 70;
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  const carouselImages = document.querySelectorAll('.hero-carousel-image');
+  const carouselDots = document.querySelectorAll('.hero-carousel-dot');
+  const prevBtn = document.querySelector('.hero-carousel-btn.prev');
+  const nextBtn = document.querySelector('.hero-carousel-btn.next');
+
+  let currentSlide = 0;
+  let autoPlay;
+
+  function showSlide(index) {
+    carouselImages.forEach((img, i) => {
+      img.classList.toggle('active', i === index);
+    });
+
+    carouselDots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === index);
+    });
+
+    currentSlide = index;
+  }
+
+  function nextSlide() {
+    showSlide((currentSlide + 1) % carouselImages.length);
+  }
+
+  function prevSlideFn() {
+    showSlide((currentSlide - 1 + carouselImages.length) % carouselImages.length);
+  }
+
+  function startAutoPlay() {
+    autoPlay = setInterval(nextSlide, 4000);
+  }
+
+  function stopAutoPlay() {
+    clearInterval(autoPlay);
+  }
+
+  nextBtn.addEventListener('click', () => {
+    stopAutoPlay();
+    nextSlide();
+    startAutoPlay();
+  });
+
+  prevBtn.addEventListener('click', () => {
+    stopAutoPlay();
+    prevSlideFn();
+    startAutoPlay();
+  });
+
+  carouselDots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      stopAutoPlay();
+      showSlide(index);
+      startAutoPlay();
+    });
+  });
+
+  showSlide(0);
+  startAutoPlay();
+</script>
+
 </body>
 </html>
